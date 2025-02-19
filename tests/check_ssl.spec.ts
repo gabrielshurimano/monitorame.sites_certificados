@@ -12,7 +12,7 @@ test.describe('Verificar segurança SSL dos sistemas', () => {
             console.log(`\n🔍 Testando: ${dominio}`);
 
             // Executa o testssl.sh e captura a saída do terminal
-            const output = execSync(`./testssl.sh/testssl.sh -S -p -U ${dominio}`, { encoding: 'utf-8' });
+            const output = execSync(`./testssl/testssl.sh -S -p -U ${dominio}`, { encoding: 'utf-8' });
 
             // Extrai os dados importantes da saída
             const certCommonNameMatch = output.match(/Common Name \(CN\)\s+([\S]+)/);
