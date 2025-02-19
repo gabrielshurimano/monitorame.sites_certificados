@@ -1,12 +1,6 @@
-Aqui está um **README.md** completo e bem documentado para seu projeto. Ele explica **como rodar o projeto, como configurar e como ele funciona**, garantindo que qualquer pessoa possa utilizá-lo sem dificuldades.
-
----
-
-### 📄 **README.md**
-```markdown
 # 🔍 Monitoramento de Status de Sistemas com Playwright
 
-Este projeto utiliza **Playwright** para testar o status de múltiplos sistemas, verificando se eles estão online (`HTTP 200`). Ele carrega um arquivo **JSON** contendo a lista de sistemas e executa os testes de forma paralela, garantindo eficiência mesmo em máquinas com menos recursos.
+Este projeto utiliza **Playwright** para testar o status de múltiplos sistemas, verificando se eles estão online (`HTTP 200`). Ele carrega um arquivo **JSON** contendo a lista de sistemas e executa os testes de forma sequencial, garantindo eficiência mesmo em máquinas com menos recursos.
 
 ---
 
@@ -42,7 +36,7 @@ O projeto já está otimizado para rodar **com qualquer número de sistemas**, p
 
 | Configuração            | Padrão   | Descrição |
 |------------------------|---------|-----------|
-| `workers`             | `4`     | Número de testes executados simultaneamente. Ajuste para mais/menos, dependendo da máquina. |
+| `workers`             | `1`     | Número de testes executados simultaneamente (roda sequencialmente). |
 | `globalTimeout`       | `300000` | Tempo máximo para execução de todos os testes (5 minutos). |
 | `navigationTimeout`   | `15000`  | Tempo máximo que cada site pode levar para responder (15 segundos). |
 | `reporter`           | `'html'` | Gera um relatório visual ao final dos testes. |
@@ -116,11 +110,6 @@ navigationTimeout: 30000, // Agora cada site tem até 30 segundos para responder
 
 ## 📌 **Personalizações**
 Se desejar modificar o comportamento do teste, você pode:
-- **Aumentar ou reduzir a quantidade de testes simultâneos:**  
-  Edite `workers` no `playwright.config.ts`:
-  ```typescript
-  workers: 2, // Executa apenas 2 testes por vez
-  ```
 - **Alterar o tempo máximo de execução dos testes:**  
   ```typescript
   globalTimeout: 600000, // Agora os testes podem rodar por até 10 minutos
@@ -155,14 +144,3 @@ Este projeto foi desenvolvido para **monitoramento de status de sistemas** de fo
 ✉️ **seuemail@email.com**  
 ```
 
----
-
-## 🎯 **Resumo**
-- **README bem estruturado** com **passo a passo detalhado**.  
-- **Explicação clara** de como rodar os testes e configurar o projeto.  
-- **Tabela com configurações** para facilitar a personalização.  
-- **Seção de erros comuns** para ajudar novos usuários.  
-- **Instruções para contribuição**, tornando o projeto mais aberto.  
-
-Agora o projeto está **documentado e pronto para ser usado**! 🚀🔥  
-Se quiser mais alguma alteração, me avise! 😃

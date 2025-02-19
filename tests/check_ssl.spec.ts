@@ -1,65 +1,47 @@
-import {test, expect} from '@playwright/test';
+import { test } from '@playwright/test';
 import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
 
-//BUSCANDO O JSON COM TODOS OS DOMINIONS QUE VAMOS QUERER TESTAR
-const dominiospath = path.join(__dirname, '../json/dominios.json');
+// Lista de domínios a testar
+const dominios = [
+    "https://raumil.brisanet.net.br"
+];
 
-const dominiosJson = JSON.parse(fs.readFileSync(dominiospath, 'utf8'));
-const dominios = dominiosJson.url;
+test.describe('Verificar segurança SSL dos sistemas', () => {
+    for (const dominio of dominios) {
+        test(`🔍 Testando SSL de: ${dominio}`, async () => {
+            console.log(`\n🔍 Testando: ${dominio}`);
 
+            // Executa o testssl.sh e captura a saída do terminal
+            const output = execSync(`./testssl.sh/testssl.sh -S -p -U ${dominio}`, { encoding: 'utf-8' });
 
-test('Verificar segurança SSL dos sistemas', async ({}) => {
-    for (const dominio of dominios ) {
-        console.log(`Testando ${dominio}`);
+            // Extrai os dados importantes da saída
+            const certCommonNameMatch = output.match(/Common Name \(CN\)\s+([\S]+)/);
+            const certDaysLeftMatch = output.match(/expires < \d+ days \((\d+)\)/);
+            const certTrustStatusMatch = output.match(/Trust \(hostname\)\s+(.+)/);
+            
+            // Processa os dados capturados
+            const certCommonName = certCommonNameMatch ? certCommonNameMatch[1] : "N/A";
+            const certDaysLeft = certDaysLeftMatch ? certDaysLeftMatch[1] : "N/A";
+            const certTrustStatus = certTrustStatusMatch ? certTrustStatusMatch[1].trim() : "N/A";
 
-        const jsonssl = `${dominio}_p443-*.json`;
-        //RODANDO O TESTE
-        execSync(`testssl.sh -S -p -U --json ${dominio}`, { stdio: 'inherit' });
+            // Exibe os resultados (sem duplicação)
+            console.log("\n✅ **Resumo do Teste SSL** ✅");
+            console.log(`- Host: ${dominio}`);
+            console.log(`- Certificado Comum: ${certCommonName}`);
+            console.log(`- Dias até Expiração: ${certDaysLeft}`);
+            console.log(`- Status de Confiança: ${certTrustStatus}`);
 
-         // Identifica o arquivo JSON gerado
-        const files = fs.readdirSync('.').filter(file => file.match(new RegExp(jsonssl)));
-        if (files.length === 0) {
-            console.error(` Erro: Nenhum JSON gerado para ${dominio}`);
-            continue;
-        }
+            // Captura vulnerabilidades reais (sem "OK")
+            const vulnerabilities = [...output.matchAll(/(potentially NOT ok|not vulnerable|vulnerable).*/g)]
+                .map(match => match[0])
+                .filter(v => !v.includes("(OK)")); // Remove linhas que contêm "(OK)"
 
-        const latestJson = files[0];
-        console.log(`📂 Arquivo JSON identificado: ${latestJson}`);
-
-         // Lê o JSON e extrai os dados necessários
-         const jsonData = JSON.parse(fs.readFileSync(latestJson, 'utf8'));
-         const scanResult = jsonData.scanResult[0];
- 
-         // Extrai as informações principais
-         const host = scanResult.targetHost || "Desconhecido";
-         const certCommonName = scanResult.serverDefaults.find(item => item.id === "cert_commonName")?.finding || "N/A";
-         const certExpiration = scanResult.serverDefaults.find(item => item.id === "cert_expirationStatus")?.finding || "N/A";
-         const certTrustStatus = scanResult.serverDefaults.find(item => item.id === "cert_trust")?.finding || "N/A";
- 
-         // Extrai vulnerabilidades encontradas
-         const vulnerabilities = scanResult.vulnerabilities
-             .filter(vuln => vuln.severity !== "OK") // Filtra apenas vulnerabilidades encontradas
-             .map(vuln => ({ id: vuln.id, severity: vuln.severity, finding: vuln.finding }));
- 
-         // Exibe os resultados no console
-         console.log("\n✅ **Resumo do Teste SSL** ✅");
-         console.log(`- Host: ${host}`);
-         console.log(`- Certificado Comum: ${certCommonName}`);
-         console.log(`- Dias até Expiração: ${certExpiration}`);
-         console.log(`- Status de Confiança: ${certTrustStatus}`);
- 
-         if (vulnerabilities.length > 0) {
-             console.log("\n **Vulnerabilidades Encontradas:**");
-             vulnerabilities.forEach(vuln => console.log(`- ${vuln.id} [${vuln.severity}]: ${vuln.finding}`));
-         } else {
-             console.log("\n✅ Nenhuma vulnerabilidade crítica encontrada.");
-         }
- 
-         // Deleta o arquivo JSON gerado para manter o diretório limpo
-         fs.unlinkSync(latestJson);
-         console.log(`\n🗑️ Arquivo ${latestJson} removido.`);
-
+            if (vulnerabilities.length > 0) {
+                console.log("\n⚠ **Vulnerabilidades Encontradas:**");
+                vulnerabilities.forEach(vuln => console.log(`- ${vuln.trim()}`));
+            } else {
+                console.log("\n✅ Nenhuma vulnerabilidade crítica encontrada.");
+            }
+        });
     }
 });
