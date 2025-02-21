@@ -52,6 +52,9 @@ for dominio in dominiosjson:
         #vez no relatorio ele será salvo apenas uma vez
         dominios_encotrados = set()
         dias_de_expiracao = set()
+        #lista onde fazemos o salvamento das vulnerabilidades encontradas
+        vulnerabilidades_encontradas = []
+        falhas_seguranca = False
 
         for linha in linhas_relatorio:
             #regex que filtra o dominio
@@ -69,5 +72,26 @@ for dominio in dominiosjson:
                 if dias_restantes not in dias_de_expiracao:
                     dias_de_expiracao.add(dias_restantes)
                     print(dias_restantes)
+
+            #regex para extrair a nota geral do teste
+            relatorio_nota = re.search(r'Overall Grade\s+(\S+)' , linha)
+            if relatorio_nota:
+                nota = relatorio_nota.group(1)
+                print(nota)
+
+            #regex onde pegamos as vulnerabilidades
+            relatorio_vulnerabilidade = re.search(r'(potentially NOT ok|VULNERABLE)', linha)
+            if relatorio_vulnerabilidade:
+                vulnerabilidades_encontradas.append(linha.strip())
+
+                #verificando se alguma vulnerabilidade foi encontrada
+                if vulnerabilidades_encontradas:
+                    falhas_seguranca = True
+                    print(falhas_seguranca)
+                    for vulnerabilidades in vulnerabilidades_encontradas:
+                        print(vulnerabilidades)
+                else:
+                    print("sem vulnerabilidade")
+
                 
        
