@@ -12,7 +12,6 @@ diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 caminhoJson = os.path.join(diretorio_atual, "..", "json", "dominios.json")
 caminhoSSL = os.path.join(diretorio_atual, "..", "testssl", "testssl.sh")
 
-
 #abrir o arquivo, usamos o with para encerrar o processo após lermos o arquivo
 with open(caminhoJson, "r", encoding="utf-8") as arquivo:
     dominiosjson = json.load(arquivo)
@@ -26,7 +25,7 @@ for dominio in dominiosjson:
     #definindo comando do testessl
     comandossl = [caminhoSSL, dominio["url"]]
 
-    #aqui definimos o nome do relatorio para cada dominio, assim cada relatorio tem um nome único
+    # Nome do arquivo de saída específico para cada domínio
     arquivo_resultado = f"./testes/resultado_testssl_{dominio['url'].replace('https://', '').replace('.', '_')}.txt"
 
     #execultando o testessl
@@ -52,8 +51,8 @@ for dominio in dominiosjson:
         #vez no relatorio ele será salvo apenas uma vez
         dominios_encotrados = set()
         dias_de_expiracao = set()
-        #lista onde fazemos o salvamento das vulnerabilidades encontradas
-        vulnerabilidades_encontradas = []
+        
+        vulnerabilidades_encontradas = set()
         falhas_seguranca = False
 
         for linha in linhas_relatorio:
@@ -63,7 +62,13 @@ for dominio in dominiosjson:
                 dominio = relatorio_dominio.group(1)
                 if dominio not in dominios_encotrados:
                     dominios_encotrados.add(dominio)
-                    print(dominio)
+                    print("Dominio do teste:",dominio)
+
+            #regex tempo de inicio do teste
+            relatorio_start = re.search(r'\[7m Start (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})', linha)
+            if relatorio_start:
+                hora_inicio_teste = relatorio_start.group(1)
+                print("Horario de inicio", hora_inicio_teste)        
 
             #regex que filtra a data de expiração
             relatorio_dias_restantes = re.search(r'ok > (\d+) days', linha) 
@@ -71,27 +76,31 @@ for dominio in dominiosjson:
                 dias_restantes = relatorio_dias_restantes.group(1)
                 if dias_restantes not in dias_de_expiracao:
                     dias_de_expiracao.add(dias_restantes)
-                    print(dias_restantes)
+                    print("Dias restantes do certificado",dias_restantes)
 
             #regex para extrair a nota geral do teste
             relatorio_nota = re.search(r'Overall Grade\s+(\S+)' , linha)
             if relatorio_nota:
                 nota = relatorio_nota.group(1)
-                print(nota)
+                print("Nota geral do teste",nota)
 
             #regex onde pegamos as vulnerabilidades
             relatorio_vulnerabilidade = re.search(r'(potentially NOT ok|VULNERABLE)', linha)
             if relatorio_vulnerabilidade:
-                vulnerabilidades_encontradas.append(linha.strip())
+                vulnerabilidades_encontradas.add(linha.strip())
 
-                #verificando se alguma vulnerabilidade foi encontrada
-                if vulnerabilidades_encontradas:
-                    falhas_seguranca = True
-                    print(falhas_seguranca)
-                    for vulnerabilidades in vulnerabilidades_encontradas:
-                        print(vulnerabilidades)
-                else:
-                    print("sem vulnerabilidade")
+        #verificando se alguma vulnerabilidade foi encontrada
+        if vulnerabilidades_encontradas:
+            falhas_seguranca = True
+            print("Falhas de segurança:",falhas_seguranca)
+            for vulnerabilidade in vulnerabilidades_encontradas:
+                print(vulnerabilidade)
+               
+            print("////////// TESTE CONCLUIDO ///////////")
+        else:
+            print("sem vulnerabilidade")
+            print("////////// TESTE CONCLUIDO ///////////")
 
-                
-       
+        #apagando o arquivo relatório que foi gerado
+        os.remove(arquivo_resultado)
+        print("Relatório apagado com sucesso")
