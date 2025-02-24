@@ -4,7 +4,6 @@ import requests
 import time
 import urllib3
 import psycopg2
-from datetime import datetime
 
 # Desativa alertas de verificação SSL
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -53,11 +52,13 @@ conexao = psycopg2.connect(
 conexao_banco = conexao.cursor()
 print("Conexão com o banco de dados aberta com sucesso")
 
+# Definir o fuso horário para a sessão
+conexao_banco.execute("SET TIME ZONE 'America/Sao_Paulo';")
+
 # Função para verificar o status do site
 def verificar_status(sistema, url):
     print(f"Testando: {sistema} ({url})...")
 
-    data_hora_teste = datetime.now()
     status = False
     tempo_resposta = None
     erro = None
@@ -82,8 +83,8 @@ def verificar_status(sistema, url):
 
     # Inserir os resultados no banco de dados
     conexao_banco.execute(
-        "INSERT INTO disponibilidade_sistemas (sistema, url, data_hora_teste, status, tempo_resposta, erro) VALUES (%s, %s, %s, %s, %s, %s)",
-        (sistema, url, data_hora_teste, status, tempo_resposta, erro)
+        "INSERT INTO disponibilidade_sistemas (sistema, url, data_hora_teste, status, tempo_resposta, erro) VALUES (%s, %s, NOW(), %s, %s, %s)",
+        (sistema, url, status, tempo_resposta, erro)
     )
     conexao.commit()
 

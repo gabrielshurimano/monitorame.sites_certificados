@@ -1,0 +1,183 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Nesse Dashboard conseguimos acompanhar metricas de disponibilidade dos sites",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 3,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "cedu58f968jr4f"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "purple",
+                  "value": null
+                },
+                {
+                  "color": "dark-green",
+                  "value": 1
+                },
+                {
+                  "color": "red",
+                  "value": 2
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 3
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "/^status_code$/",
+            "values": true
+          },
+          "showPercentChange": false,
+          "text": {},
+          "textMode": "name",
+          "wideLayout": true
+        },
+        "pluginVersion": "11.5.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "cedu58f968jr4f"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "SELECT sistema, data_hora_teste,\r\n       CASE \r\n           -- TESTE DESATUALIZADO (NÃO HOUVE TESTE NOS ÚLTIMOS 2 MINUTOS)\r\n           WHEN data_hora_teste < NOW() - INTERVAL '2 minutes' THEN 3 \r\n           -- TESTE RECENTE ONLINE\r\n           WHEN status = TRUE THEN 1\r\n           -- TESTE RECENTE OFFLINE\r\n           ELSE 2\r\n       END AS status_code\r\nFROM (\r\n    -- Seleciona apenas o último teste de cada sistema\r\n    SELECT DISTINCT ON (sistema) sistema, data_hora_teste, status\r\n    FROM disponibilidade_sistemas\r\n    ORDER BY sistema, data_hora_teste DESC\r\n) subquery\r\nORDER BY sistema DESC;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "cedu58f968jr4f"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": true,
+            "rawQuery": true,
+            "rawSql": "SELECT * FROM disponibilidade_sistemas;",
+            "refId": "B",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Panel Title",
+        "type": "stat"
+      }
+    ],
+    "preload": false,
+    "refresh": "5s",
+    "schemaVersion": 40,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "text": "cajuina",
+            "value": "cajuina"
+          },
+          "definition": "SELECT DISTINCT sistema FROM disponibilidade_sistemas WHERE ",
+          "description": "Nesta variável selecionamos todos os sites nos quais testamos disponibilidade",
+          "name": "Variavel_sites",
+          "options": [],
+          "query": "SELECT DISTINCT sistema FROM disponibilidade_sistemas WHERE ",
+          "refresh": 1,
+          "regex": "",
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-30m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Disponibilidade_Sites",
+    "uid": "fedu5o4evp2iob",
+    "version": 15,
+    "weekStart": ""
+  }
