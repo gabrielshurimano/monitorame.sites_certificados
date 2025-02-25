@@ -65,8 +65,9 @@ def verificar_status(sistema, url):
 
     try:
         inicio_teste = time.time()
-        response = requests.get(url, headers=HEADERS, timeout=TIMEOUT, verify=False)  
-        tempo_resposta = time.time() - inicio_teste
+        response = requests.get(url, headers=HEADERS, timeout=TIMEOUT, verify=False)
+        fim_teste = time.time()
+        tempo_resposta = fim_teste - inicio_teste
         tempo_resposta = round(tempo_resposta, 2)  # Formatar para duas casas decimais
         status_code = response.status_code
 
@@ -78,6 +79,9 @@ def verificar_status(sistema, url):
             print(f"{sistema} respondeu com status inesperado: {status_code}")
 
     except Exception as e:
+        fim_teste = time.time()
+        tempo_resposta = fim_teste - inicio_teste
+        tempo_resposta = round(tempo_resposta, 2)  # Formatar para duas casas decimais
         erro = str(e)
         print(f"Erro ao acessar {sistema}: {e}")
 
