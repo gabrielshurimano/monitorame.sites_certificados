@@ -1,6 +1,7 @@
 -- Criação da tabela de testes SSL
 CREATE TABLE IF NOT EXISTS ssl_test_results (
     id SERIAL PRIMARY KEY,
+    sistema VARCHAR(255) NOT NULL,
     dominio VARCHAR(255) NOT NULL,
     hora_inicio_teste TIMESTAMP WITH TIME ZONE NOT NULL,
     dias_restantes INT,

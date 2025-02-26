@@ -119,15 +119,15 @@ for dominio in dominiosjson:
                 print("Falhas de segurança:", falhas_seguranca)
                 vulnerabilidades_concatenadas = "\n".join(vulnerabilidades_encontradas)
                 conexao_banco.execute(
-                    "INSERT INTO ssl_test_results (dominio, hora_inicio_teste, dias_restantes, nota, vulnerabilidade, vulneravel, erro) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (dominio["url"], hora_inicio_teste, dias_restantes, nota, vulnerabilidades_concatenadas, True, None)
+                    "INSERT INTO ssl_test_results (sistema, dominio, hora_inicio_teste, dias_restantes, nota, vulnerabilidade, vulneravel, erro) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                    (dominio["sistema"], dominio["url"], hora_inicio_teste, dias_restantes, nota, vulnerabilidades_concatenadas, True, None)
                 )
                 print("////////// TESTE CONCLUIDO ///////////")
             else:
                 print("sem vulnerabilidade")
                 conexao_banco.execute(
-                    "INSERT INTO ssl_test_results (dominio, hora_inicio_teste, dias_restantes, nota, vulnerabilidade, vulneravel, erro) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (dominio["url"], hora_inicio_teste, dias_restantes, nota, None, False, None)
+                    "INSERT INTO ssl_test_results (sistema, dominio, hora_inicio_teste, dias_restantes, nota, vulnerabilidade, vulneravel, erro) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                    (dominio["sistema"], dominio["url"], hora_inicio_teste, dias_restantes, nota, None, False, None)
                 )
                 print("////////// TESTE CONCLUIDO ///////////")
 
@@ -141,8 +141,8 @@ for dominio in dominiosjson:
         processoSSL.kill()
         hora_inicio_teste = datetime.now()
         conexao_banco.execute(
-            "INSERT INTO ssl_test_results (dominio, hora_inicio_teste, dias_restantes, nota, vulnerabilidade, vulneravel, erro) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-            (dominio["url"], hora_inicio_teste, None, None, None, False, "Timeout: O teste SSL demorou mais de 5 minutos e foi cancelado.")
+            "INSERT INTO ssl_test_results (sistema, dominio, hora_inicio_teste, dias_restantes, nota, vulnerabilidade, vulneravel, erro) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            (dominio["sistema"], dominio["url"], hora_inicio_teste, None, None, None, False, "Timeout: O teste SSL demorou mais de 5 minutos e foi cancelado.")
         )
         if os.path.exists(arquivo_resultado):
             os.remove(arquivo_resultado)
@@ -152,7 +152,3 @@ conexao.commit()
 conexao_banco.close()
 conexao.close()
 print("Fechando conexão com o banco de dados")
-
-
-
-
