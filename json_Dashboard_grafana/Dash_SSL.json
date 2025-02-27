@@ -120,7 +120,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "displayName": "Certificados Sem Vulneráveis:",
+          "displayName": "Certificados não Vulneráveis:",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -169,7 +169,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT  COUNT (DISTINCT sistema) AS Cert_Sem_Vulneráveis FROM ssl_test_results WHERE vulneravel = False",
+          "rawSql": "SELECT  COUNT (DISTINCT sistema) AS Cert_Sem_Vulneráveis FROM ssl_test_results WHERE vulneravel = False AND dias_restantes IS NOT NULL",
           "refId": "A",
           "sql": {
             "columns": [
@@ -421,7 +421,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT  COUNT (DISTINCT sistema) AS PROX_VENCER\r\nFROM ssl_test_results\r\nWHERE dias_restantes >= 30;  -- Aqui você pode definir um dia viavel para a corporação\r\n",
+          "rawSql": "SELECT  COUNT (DISTINCT sistema) AS PROX_VENCER\r\nFROM ssl_test_results\r\nWHERE dias_restantes >= 30 ;  -- Aqui você pode definir um dia viavel para a corporação\r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -848,7 +848,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT DISTINCT ON (sistema)\r\n    sistema AS dominio,\r\n    NULLIF(dias_restantes, -1) AS dias_restantes,  -- Substitui -1 por NULL (deixa em branco)\r\n    CASE \r\n        WHEN dias_restantes IS NULL THEN '❌ Erro no Teste'\r\n        WHEN dias_restantes >= 31 THEN '🟢 Válido'\r\n        WHEN dias_restantes BETWEEN 15 AND 30 THEN '🟡 Atenção'\r\n        WHEN dias_restantes BETWEEN 1 AND 14 THEN '🔴 Crítico'\r\n        ELSE '⚠️ Expirado'\r\n    END AS status\r\nFROM ssl_test_results\r\nORDER BY sistema, dias_restantes ASC;\r\n",
+          "rawSql": "SELECT DISTINCT ON (sistema)\r\n    sistema AS dominio,\r\n    dias_restantes AS dias_restantes,  \r\n    CASE \r\n        WHEN dias_restantes IS NULL THEN '❌ Erro no Teste'\r\n        WHEN dias_restantes >= 31 THEN '🟢 Válido'\r\n        WHEN dias_restantes BETWEEN 15 AND 30 THEN '🟡 Atenção'\r\n        WHEN dias_restantes BETWEEN 1 AND 14 THEN '🔴 Crítico'\r\n        ELSE '⚠️ Expirado'\r\n    END AS status\r\nFROM ssl_test_results\r\nWHERE dias_restantes IS NOT NULL\r\nORDER BY sistema, dias_restantes ASC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1028,6 +1028,6 @@
   "timezone": "browser",
   "title": "Validação_SSL",
   "uid": "eee4x5c7qyzuof",
-  "version": 3,
+  "version": 5,
   "weekStart": ""
 }

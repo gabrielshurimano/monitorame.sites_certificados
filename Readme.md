@@ -4,7 +4,11 @@
 
 Olá a todos!  
 
-![Tela  Dash geral](./img_readme/dash_final.png)
+# DASHBOARD TESTES CERTIFICADOS SSL
+![Tela  Dash geral](./img_readme/dASG_ssl_GERAL.png)
+
+# DASHBOARD TESTES DISPONIBILIDADE SITES
+![Tela  Dash geral](./img_readme/dASG_DISPONIBILIDADE_GERAL.png)
 
 Trago aqui uma solução simples para **monitoramento de aplicações web** e **testes para validação de certificados SSL**.  
 
