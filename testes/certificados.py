@@ -143,7 +143,7 @@ for dominio in dominiosjson:
     except subprocess.TimeoutExpired:
         print(f"Timeout: O teste SSL para {dominio['url']} demorou mais de 5 minutos e foi cancelado.")
         processoSSL.kill()
-        hora_inicio_teste = datetime.now()
+        hora_inicio_teste = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         conexao_banco.execute(
             "INSERT INTO ssl_test_results (sistema, dominio, hora_inicio_teste, dias_restantes, nota, vulnerabilidade, vulneravel, erro) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
             (dominio["sistema"], dominio["url"], hora_inicio_teste, None, None, None, False, "Timeout: O teste SSL demorou mais de 5 minutos e foi cancelado.")
