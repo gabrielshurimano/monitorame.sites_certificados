@@ -4,6 +4,10 @@ import subprocess
 import re
 import psycopg2
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Carregar variáveis de ambiente do arquivo .env
+load_dotenv()
 
 # Para um uso mais dinamico vamos usar os.path, assim conseguimos pegar o ponto atual 
 # do nosso script e dai encotrar mais facilmente outros arquivo que vamos precisar
@@ -16,11 +20,11 @@ caminhoSSL = os.path.join(diretorio_atual, "..", "testssl", "testssl.sh")
 
 #Aqui fazemos o conectamento com o banco de dados
 conexao = psycopg2.connect(
-    dbname="monitoramento_aplicacoes",
-    user="user",
-    password="123456789",
-    host="localhost",
-    port="5432"
+    dbname=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT")
 )
 conexao_banco = conexao.cursor()
 print("Abrindo conexão com o banco de dados")

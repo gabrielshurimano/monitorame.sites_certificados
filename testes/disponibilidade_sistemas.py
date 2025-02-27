@@ -4,6 +4,10 @@ import requests
 import time
 import urllib3
 import psycopg2
+from dotenv import load_dotenv
+
+# Carregar variáveis de ambiente do arquivo .env
+load_dotenv()
 
 # Desativa alertas de verificação SSL
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -43,11 +47,11 @@ TIMEOUT = 15
 
 # Conectar ao banco de dados PostgreSQL
 conexao = psycopg2.connect(
-    dbname="monitoramento_aplicacoes",
-    user="user",
-    password="123456789",
-    host="localhost",
-    port="5432"
+    dbname=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT")
 )
 conexao_banco = conexao.cursor()
 print("Conexão com o banco de dados aberta com sucesso")

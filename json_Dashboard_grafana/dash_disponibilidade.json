@@ -1437,7 +1437,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 9,
         "x": 0,
         "y": 38
       },
@@ -1545,8 +1545,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
+        "w": 15,
+        "x": 9,
         "y": 38
       },
       "id": 9,
@@ -1590,7 +1590,7 @@
           }
         }
       ],
-      "title": "Média de tempo do teste",
+      "title": "Latência ",
       "type": "timeseries"
     }
   ],
@@ -1602,8 +1602,8 @@
     "list": [
       {
         "current": {
-          "text": "teste",
-          "value": "teste"
+          "text": "cajuina",
+          "value": "cajuina"
         },
         "definition": "SELECT DISTINCT sistema FROM disponibilidade_sistemas;",
         "description": "Nesta variável selecionamos todos os sites nos quais testamos disponibilidade",
@@ -1624,6 +1624,6 @@
   "timezone": "browser",
   "title": "Disponibilidade_Sites",
   "uid": "fedu5o4evp2iob",
-  "version": 50,
+  "version": 52,
   "weekStart": ""
 }
