@@ -1,5 +1,8 @@
 [
  
-  { "sistema": "cajuina", "url": "https://www.cajuinasaogeraldo.com.br" },
+  { "sistema": "Amazon", "url": "https://www.amazon.com.br" },
+  { "sistema": "MagazineL", "url": "https://www.magazineluiza.com.br" },
+  { "sistema": "Havan", "url": "https://www.havan.com.br" },
+  { "sistema": "Claro", "url": "https://www.claro.com.br" },
   { "sistema": "brisanet", "url": "https://www.brisanet.com.br" }
 ]

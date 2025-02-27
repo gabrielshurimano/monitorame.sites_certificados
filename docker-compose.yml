@@ -40,6 +40,7 @@ services:
       - postgres
     volumes:
       - .:/app
+    command: ["python3", "/app/executar_testes.py"]
 
 volumes:
   postgres_disponibilidade_SSL:
